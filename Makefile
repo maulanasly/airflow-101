@@ -16,3 +16,9 @@ start:
 	docker-compose -f local.yaml down && \
 	docker-compose -f local.yaml build && \
 	docker-compose -f local.yaml up
+
+init-db:
+	docker exec -it postgres psql -U airflow
+
+add-connection:
+	docker exec -it --user airflow airflow-webserver ./set_connections.sh

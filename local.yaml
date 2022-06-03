@@ -3,14 +3,18 @@ version: '3.4'
 
 x-common:
   &common
-  image: apache/airflow:2.3.0
+  # image: apache/airflow:2.3.0
+  build:
+      context: .
+      dockerfile: ./Dockerfile
+  image: airflow_101
   user: "${AIRFLOW_UID}:0"
-  env_file: 
+  env_file:
     - .env
   volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
+    - ./dags:/usr/local/airflow/dags
+    - ./logs:/usr/local/airflow/logs
+    - ./plugins:/usr/local/airflow/plugins
     - /var/run/docker.sock:/var/run/docker.sock
 
 x-depends-on:
@@ -18,8 +22,6 @@ x-depends-on:
   depends_on:
     postgres:
       condition: service_healthy
-    airflow-init:
-      condition: service_completed_successfully
 
 services:
   postgres:
@@ -37,8 +39,7 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
 
   scheduler:
-    <<: *common
-    <<: *depends-on
+    <<: [ *common, *depends-on]
     container_name: airflow-scheduler
     command: scheduler
     restart: on-failure
@@ -46,8 +47,7 @@ services:
       - "8793:8793"
 
   webserver:
-    <<: *common
-    <<: *depends-on
+    <<: [ *common, *depends-on]
     container_name: airflow-webserver
     restart: always
     command: webserver
@@ -58,20 +58,9 @@ services:
       interval: 30s
       timeout: 30s
       retries: 5
-  
-  airflow-init:
-    <<: *common
-    container_name: airflow-init
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
-        exec /entrypoint airflow version
 
   airflow-cli:
-    <<: *common
+    <<: [ *common, *depends-on]
     container_name: airflow-cli
     profiles:
       - debug

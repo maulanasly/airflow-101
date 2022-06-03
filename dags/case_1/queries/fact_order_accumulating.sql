@@ -70,8 +70,8 @@ SELECT
 	, SUM(usd_amount) AS total_order_usd_amount
 	, SUM(invoice_date - order_date) AS order_to_invoice_lag_days
 	, SUM(payment_date - invoice_date) AS invoice_to_payment_lag_days
-	, TO_CHAR((ARRAY_AGG(order_date))[1], 'yyyymmdd') AS order_date_id
-	, TO_CHAR((ARRAY_AGG(invoice_date))[1], 'yyyymmdd') AS invoice_date_id
-	, TO_CHAR((ARRAY_AGG(payment_date))[1], 'yyyymmdd') AS payment_date_id
+	, CAST(TO_CHAR((ARRAY_AGG(order_date))[1], 'yyyymmdd') AS INT) AS order_date_id
+	, CAST(TO_CHAR((ARRAY_AGG(invoice_date))[1], 'yyyymmdd') AS INT) AS invoice_date_id
+	, CAST(TO_CHAR((ARRAY_AGG(payment_date))[1], 'yyyymmdd') AS INT) AS payment_date_id
 FROM final_orders
 GROUP BY 1, 2, 3, 4;

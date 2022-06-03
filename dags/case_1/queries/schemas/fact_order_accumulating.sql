@@ -12,5 +12,27 @@ CREATE TABLE IF NOT EXISTS fact_order_accumulating (
   "invoice_to_payment_lag_days" int
 );
 
-CREATE INDEX fact_order_accumulating_customer_id_idx
-  ON fact_order_accumulating(customer_id);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fact_order_accumulating_customer_id_idx') THEN
+      ALTER TABLE fact_order_accumulating
+            ADD CONSTRAINT fact_order_accumulating_customer_id_idx FOREIGN KEY (customer_id)
+                REFERENCES dim_customers (id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fact_order_accumulating_order_date_idx') THEN
+      ALTER TABLE fact_order_accumulating
+            ADD CONSTRAINT fact_order_accumulating_order_date_idx FOREIGN KEY (order_date_id)
+                REFERENCES dim_date (id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fact_order_accumulating_invoice_date_idx') THEN
+      ALTER TABLE fact_order_accumulating
+            ADD CONSTRAINT fact_order_accumulating_invoice_date_idx FOREIGN KEY (invoice_date_id)
+                REFERENCES dim_date (id);
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fact_order_accumulating_payment_date_idx') THEN
+      ALTER TABLE fact_order_accumulating
+            ADD CONSTRAINT fact_order_accumulating_payment_date_idx FOREIGN KEY (payment_date_id)
+                REFERENCES dim_date (id);
+    END IF;
+END;
+$$;
