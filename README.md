@@ -39,8 +39,8 @@ _AIRFLOW_WWW_USER_CREATE=True
 _AIRFLOW_WWW_USER_USERNAME=airflow
 _AIRFLOW_WWW_USER_PASSWORD=airflow
 ```
-
-### Run project for first assignment task
+---
+### 1. Run project for first assignment task
 In order to run this project please follow these steps:
 - Execute `make start`
 ```
@@ -65,5 +65,25 @@ Once contaners up and running proceed with the following step
 - Visit airflow web page on `localhost:8080`
 - Enable `soal_1_initial_dag` and trigger it manually since we don't define the scheduled
 - Enable `soal_1`, this dag has scheduled to be run at 7AM Asia/Jakarta but incase we need to see if it works we can always trigger it manually
+---
+### 2. Run project for second assignment task
 
-### Run project for second assignment task
+The second task build using a python and mostly utilise built-in function. However, the extraction, transformaion and data cleansing use regex.
+In order to run this script please execute this command:
+```
+./run.sh {json_file}
+
+## Example
+./run.sh ./scripts/soal-2.json
+```
+
+And will print out result into conlose, as example below:
+```
+1. lele 1936kg
+2. mas 1176kg
+3. tongkol 710kg
+4. nila 696kg
+5. kembung 282kg
+6. kakap 256kg
+...
+```
