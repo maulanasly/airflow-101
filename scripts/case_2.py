@@ -23,6 +23,7 @@ PATTERN = [
     "patin",
 ]
 EXTRA_PATTERN = ["rata", "kecuali", "-", "sampai", "not"]
+UNIT = "kg"
 
 
 def read_json_file(file_path):
@@ -137,20 +138,20 @@ def aggregated_values(parsed_values):
     return agg_val
 
 
-def console_presentation(agg_val):
+def console_presentation(agg_val, unit):
     no_idx = 1
-    for comodity, val in agg_val.items():
-        print(f"{no_idx}. {comodity} {val}kg")
+    for comodity, val in dict(sorted(agg_val.items(), key=lambda item: item[1], reverse=True)).items():
+        print(f"{no_idx}. {comodity} {val}{unit}")
         no_idx += 1
 
 
 if __name__ == "__main__":
     arguments = sys.argv
-    if len(arguments) > 1 > 2:
+    if len(arguments) < 2:
+        print("need argument of json file dataset")
+    else:
         filename = arguments[1] if arguments[1] else "soal-2.json"
         content = read_json_file(filename)
         parsed_values = parse_values(content)
         agg_val = aggregated_values(parsed_values)
-        console_presentation(agg_val)
-
-    print("need argument of json file dataset")
+        console_presentation(agg_val, UNIT)
